@@ -28,7 +28,6 @@ public class MainActivity extends AppCompatActivity {
     private RealmConfiguration mRealmConfig;
     private EditText mText;
     private RealmRecyclerView mNotes;
-    private FloatingActionButton mNew;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,18 +36,18 @@ public class MainActivity extends AppCompatActivity {
 
         mRealmConfig = new RealmConfiguration
                 .Builder(this)
-                .deleteRealmIfMigrationNeeded()
                 .build();
         Realm.setDefaultConfiguration(mRealmConfig);
         mRealm = Realm.getDefaultInstance();
         mText = (EditText) findViewById(R.id.et_text);
         mNotes = (RealmRecyclerView) findViewById(R.id.rv_notes);
-        mNew = (FloatingActionButton) findViewById(R.id.fab_new);
+
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        mNew.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(mText.getText().length() > 0){
@@ -115,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
         public NoteRecyclerViewAdapter(
                 Context context,
                 RealmResults<Note> realmResults) {
-            super(context, realmResults, true, true, true, "text");
+            super(context, realmResults, true, true);
         }
 
         public class ViewHolder extends RealmViewHolder {
