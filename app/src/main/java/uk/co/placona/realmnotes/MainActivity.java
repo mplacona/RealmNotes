@@ -11,8 +11,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.facebook.stetho.Stetho;
+import com.facebook.stetho.okhttp3.StethoInterceptor;
+import com.jakewharton.picasso.OkHttp3Downloader;
+import com.squareup.picasso.Picasso;
 
 import co.moonmonkeylabs.realmrecyclerview.RealmRecyclerView;
 import io.realm.Realm;
@@ -21,6 +27,7 @@ import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 import io.realm.RealmViewHolder;
 import io.realm.Sort;
+import okhttp3.OkHttpClient;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,11 +35,25 @@ public class MainActivity extends AppCompatActivity {
     private RealmConfiguration mRealmConfig;
     private EditText mText;
     private RealmRecyclerView mNotes;
+    private Picasso mPicasso;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        OkHttpClient okClient = new OkHttpClient
+                .Builder()
+                .addNetworkInterceptor(new StethoInterceptor())
+                .build();
+
+
+        mPicasso = new Picasso.Builder(getApplicationContext())
+                .downloader(new OkHttp3Downloader(okClient))
+                .loggingEnabled(true)
+                .build();
+
+        Stetho.initializeWithDefaults(this);
 
         mRealmConfig = new RealmConfiguration
                 .Builder(this)
@@ -111,6 +132,8 @@ public class MainActivity extends AppCompatActivity {
     public class NoteRecyclerViewAdapter extends RealmBasedRecyclerViewAdapter<
                 Note, NoteRecyclerViewAdapter.ViewHolder> {
 
+        private static final String ICON_URL = "https://unsplash.it/100/100?random";
+
         public NoteRecyclerViewAdapter(
                 Context context,
                 RealmResults<Note> realmResults) {
@@ -120,11 +143,13 @@ public class MainActivity extends AppCompatActivity {
         public class ViewHolder extends RealmViewHolder {
             private TextView mText;
             private TextView mDate;
+            private ImageView mIcon;
 
             public ViewHolder(RelativeLayout container) {
                 super(container);
                 this.mText = (TextView) container.findViewById(R.id.tv_text);
                 this.mDate = (TextView) container.findViewById(R.id.tv_date);
+                this.mIcon = (ImageView) container.findViewById(R.id.iv_icon);
             }
         }
 
@@ -139,6 +164,10 @@ public class MainActivity extends AppCompatActivity {
             final Note note = realmResults.get(position);
             viewHolder.mText.setText(note.getText());
             viewHolder.mDate.setText(note.getDate().toString());
+
+            mPicasso.load(ICON_URL + "&" + position)
+                    .placeholder(R.mipmap.ic_launcher)
+                    .into(viewHolder.mIcon);
         }
     }
 }
