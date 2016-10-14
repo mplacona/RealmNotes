@@ -1,6 +1,7 @@
 package uk.co.placona.realmnotes;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -37,11 +38,14 @@ public class MainActivity extends AppCompatActivity {
     private EditText mText;
     private RealmRecyclerView mNotes;
     private Picasso mPicasso;
+    private Context mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mContext = getApplicationContext();
 
         OkHttpClient okClient = new OkHttpClient
                 .Builder()
@@ -53,14 +57,6 @@ public class MainActivity extends AppCompatActivity {
                 .downloader(new OkHttp3Downloader(okClient))
                 .loggingEnabled(true)
                 .build();
-
-        if (BuildConfig.DEBUG) {
-            Stetho.initialize(
-                    Stetho.newInitializerBuilder(this)
-                            .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
-                            .enableWebKitInspector(RealmInspectorModulesProvider.builder(this).build())
-                            .build());
-        }
 
         mRealmConfig = new RealmConfiguration
                 .Builder(this)
@@ -167,14 +163,27 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onBindRealmViewHolder(ViewHolder viewHolder, int position) {
+        public void onBindRealmViewHolder(ViewHolder viewHolder, final int position) {
             final Note note = realmResults.get(position);
             viewHolder.mText.setText(note.getText());
             viewHolder.mDate.setText(note.getDate().toString());
 
-            mPicasso.load(ICON_URL + "&" + position)
+            final int itemId = position+1;
+
+            mPicasso.load(ICON_URL + "&" + itemId)
                     .placeholder(R.mipmap.ic_launcher)
                     .into(viewHolder.mIcon);
+
+            viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(mContext, DetailActivity.class);
+                    Bundle b = new Bundle();
+                    b.putInt("id", itemId);
+                    intent.putExtras(b);
+                    startActivity(intent);
+                }
+            });
         }
     }
 }
