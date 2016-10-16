@@ -1,13 +1,10 @@
 package uk.co.placona.realmnotes;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
 
-import com.facebook.stetho.okhttp3.StethoInterceptor;
-
-import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -22,7 +19,7 @@ public class DetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detail);
 
         // Instantiate the API
-        ApiService api = NoteClient.getApiService();
+        ApiService api = NoteClient.getApiService(getString(R.string.apiUserName), getString(R.string.apiPassword));
 
         //Get the item id
         Bundle b = getIntent().getExtras();

@@ -29,17 +29,14 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * limitations under the License.
  */
 
-public class NoteClient {
+class NoteClient {
     private static final String ROOT_URL = "https://jsonplaceholder.typicode.com";
 
     /**
      * Get Retrofit Instance
      */
-    private static Retrofit getRetrofitInstance() {
-
-        String apiUserName = "marcos@twilio.com";
-        String apiPassword = "48d8feeb-4312-4fed-9c8b-d76834b53bef";
-        String credentials = apiUserName +  ":" + apiPassword;
+    private static Retrofit getRetrofitInstance(String userName, String password) {
+        String credentials = userName +  ":" + password;
         final String basic =
                 "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
 
@@ -69,7 +66,7 @@ public class NoteClient {
      *
      * @return API Service
      */
-    public static ApiService getApiService() {
-        return getRetrofitInstance().create(ApiService.class);
+    static ApiService getApiService(String userName, String password) {
+        return getRetrofitInstance(userName, password).create(ApiService.class);
     }
 }

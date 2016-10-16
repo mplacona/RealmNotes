@@ -7,20 +7,18 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.facebook.stetho.Stetho;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.jakewharton.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
-import com.uphyca.stetho_realm.RealmInspectorModulesProvider;
 
 import co.moonmonkeylabs.realmrecyclerview.RealmRecyclerView;
 import io.realm.Realm;
@@ -34,7 +32,6 @@ import okhttp3.OkHttpClient;
 public class MainActivity extends AppCompatActivity {
 
     private Realm mRealm;
-    private RealmConfiguration mRealmConfig;
     private EditText mText;
     private RealmRecyclerView mNotes;
     private Picasso mPicasso;
@@ -58,8 +55,9 @@ public class MainActivity extends AppCompatActivity {
                 .loggingEnabled(true)
                 .build();
 
-        mRealmConfig = new RealmConfiguration
+        RealmConfiguration mRealmConfig = new RealmConfiguration
                 .Builder(this)
+                .deleteRealmIfMigrationNeeded()
                 .build();
         Realm.setDefaultConfiguration(mRealmConfig);
         mRealm = Realm.getDefaultInstance();
@@ -137,18 +135,18 @@ public class MainActivity extends AppCompatActivity {
 
         private static final String ICON_URL = "https://unsplash.it/100/100?random";
 
-        public NoteRecyclerViewAdapter(
+        NoteRecyclerViewAdapter(
                 Context context,
                 RealmResults<Note> realmResults) {
             super(context, realmResults, true, true);
         }
 
-        public class ViewHolder extends RealmViewHolder {
+        class ViewHolder extends RealmViewHolder {
             private TextView mText;
             private TextView mDate;
             private ImageView mIcon;
 
-            public ViewHolder(RelativeLayout container) {
+            ViewHolder(RelativeLayout container) {
                 super(container);
                 this.mText = (TextView) container.findViewById(R.id.tv_text);
                 this.mDate = (TextView) container.findViewById(R.id.tv_date);
