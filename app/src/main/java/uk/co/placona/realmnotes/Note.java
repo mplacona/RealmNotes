@@ -11,7 +11,7 @@ import io.realm.annotations.RealmClass;
 @RealmClass
 public class Note implements RealmModel {
     @PrimaryKey
-    private String id = UUID.randomUUID().toString();;
+    private String id = UUID.randomUUID().toString();
     private String text;
     private Date date = new Date(java.text.DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime()));
 
